@@ -1,7 +1,9 @@
 package com.tarkovcompanion.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -19,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -74,6 +77,7 @@ public class MainFragment extends Fragment {
         //Log.i("Fragment State", "onCreateView() called");
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         setHasOptionsMenu(true);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager( new LinearLayoutManager(this.getContext()));
         adapter = new ItemAdapter();
@@ -85,6 +89,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         SearchView searchView = (SearchView) view.findViewById(R.id.searchView);
+        searchView.setIconifiedByDefault(false);
+        Context context = this.getContext();
         itemViewModel.getItemLiveData().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
             @Override
             public void onChanged(List<Item> items) {
@@ -98,6 +104,9 @@ public class MainFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(context,
+                        SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+                suggestions.saveRecentQuery(query, null);
                 Log.v("Error", "Retrieving new items...");
                 itemViewModel.retrieveItems(query);
                 return true;
@@ -105,11 +114,13 @@ public class MainFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //filter(newText);
+                filter(newText);
+                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(context,
+                        SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+                suggestions.saveRecentQuery(newText, null);
                 return false;
             }
         });
-
     }
     @Override
     public void onStart() {

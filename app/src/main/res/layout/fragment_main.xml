@@ -7,6 +7,15 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     tools:context=".MainFragment">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="412dp"
+        android:layout_height="607dp"
+        android:layout_marginBottom="5dp"
+        android:windowSoftInputMode="adjustNothing"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/imageButton"
@@ -20,6 +29,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="293dp"
+        android:layout_height="79dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="9dp"
+        android:editTextColor="@color/black"
+        android:icon="@android:drawable/ic_menu_search"
+        android:searchSuggestAuthority="com.tarkovcompanion.app.SuggestionProvider"
+        android:searchSuggestSelection=" ?"
+        android:textColorHint="@color/black"
+        android:tint="@color/black"
+        android:title="@string/Search"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton"
+        app:layout_constraintStart_toEndOf="@+id/imageButton2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <ImageButton
         android:id="@+id/imageButton2"
         android:layout_width="63dp"
@@ -29,30 +57,6 @@
         android:src="@android:drawable/ic_menu_sort_by_size"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="412dp"
-        android:layout_height="607dp"
-        android:layout_marginBottom="5dp"
-        android:windowSoftInputMode="adjustNothing"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searchView"
-        android:layout_width="293dp"
-        android:layout_height="79dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="9dp"
-        android:icon="@android:drawable/ic_menu_search"
-        android:tint="@android:color/white"
-        android:title="Search"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton"
-        app:layout_constraintStart_toEndOf="@+id/imageButton2"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
