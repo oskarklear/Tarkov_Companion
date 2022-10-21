@@ -1,7 +1,11 @@
 package com.tarkovcompanion.app;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Item {
+    @SerializedName("name")
     private String itemName;
+    @SerializedName("avg24hPrice")
     private String itemDescription;
 
     public Item(String itemName, String itemDescription) {
