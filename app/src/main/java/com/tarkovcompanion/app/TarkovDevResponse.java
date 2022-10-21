@@ -4,15 +4,15 @@ import com.google.gson.annotations.SerializedName;
 
 public class TarkovDevResponse {
 
-    @SerializedName("items")
-    public ItemResponse mItems;
+    @SerializedName("data")
+    public DataResponse dataResponse;
 
-    public ItemResponse getItems() {
-        return mItems;
+    public DataResponse getDataResponse() {
+        return dataResponse;
     }
 
-    public void setItems(ItemResponse items) {
-        this.mItems = items;
+    public void setDataResponse(DataResponse dataResponse) {
+        this.dataResponse = dataResponse;
     }
 
 }

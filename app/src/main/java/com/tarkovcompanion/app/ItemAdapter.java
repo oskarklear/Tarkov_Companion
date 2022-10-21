@@ -15,17 +15,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private ArrayList<Item> itemList;
 
     // creating a constructor for our variables.
-    public ItemAdapter(ArrayList<Item> itemList, Context context) {
-        this.itemList = itemList;
-    }
+    public ItemAdapter() { itemList = new ArrayList<>(); }
 
-    // method for filtering our recyclerview items.
-    public void filterList(ArrayList<Item> filterList) {
-        // below line is to add our filtered
-        // list in our course array list.
-        itemList = filterList;
-        // below line is to notify our adapter
-        // as change in recycler view data.
+    public void updateAdapterList(ArrayList<Item> newList) {
+        itemList.clear();
+        itemList.addAll(newList);
         notifyDataSetChanged();
     }
 

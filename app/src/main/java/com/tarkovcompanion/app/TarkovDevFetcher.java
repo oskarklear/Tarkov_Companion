@@ -1,10 +1,15 @@
 package com.tarkovcompanion.app;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.RestrictTo;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+
+import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -26,28 +31,29 @@ public class TarkovDevFetcher {
         mTarkovDevApi = mRetrofit.create(TarkovDevApi.class);
     }
 
-    public LiveData<List<Item>> fetchItems(String query) {
-        MutableLiveData<List<Item>> responseLiveData = new MutableLiveData<>();
-        Call<TarkovDevResponse> tarkovDevRequest = mTarkovDevApi.fetchItems(query);
-
+    public void fetchItems(String query, MutableLiveData<List<Item>> responseLiveData) {
+        Log.v("Error", "Fetching...");
+        JsonObject queryObject = new JsonObject();
+        queryObject.addProperty("query", query);
+        Call<TarkovDevResponse> tarkovDevRequest = mTarkovDevApi.fetchItems(queryObject);
         tarkovDevRequest.enqueue(new Callback<TarkovDevResponse>() {
             @Override
             public void onResponse(@NonNull Call<TarkovDevResponse> call,
                                    @NonNull Response<TarkovDevResponse> response) {
                 TarkovDevResponse tarkovDevResponse = response.body();
-                ItemResponse itemResponse = tarkovDevResponse.getItems();
-                List<Item> items = itemResponse.getItems();
+                DataResponse dataResponse = tarkovDevResponse.getDataResponse();
+                List<Item> items = dataResponse.getItems();
                 responseLiveData.setValue(items);
+                Log.v("Error", "Items fetched...");
             }
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                // error handling and logging
+                Log.v("Error", "Fetching failed...");
+                Log.v("Error", t.getMessage());
             }
 
         });
-
-        return responseLiveData;
     }
 
 }
