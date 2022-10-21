@@ -90,7 +90,9 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         SearchView searchView = (SearchView) view.findViewById(R.id.searchView);
         searchView.setIconifiedByDefault(false);
-        Context context = this.getContext();
+        searchView.setQueryRefinementEnabled(true);
+        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this.getContext(),
+                SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
         itemViewModel.getItemLiveData().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
             @Override
             public void onChanged(List<Item> items) {
@@ -104,8 +106,6 @@ public class MainFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(context,
-                        SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
                 suggestions.saveRecentQuery(query, null);
                 Log.v("Error", "Retrieving new items...");
                 itemViewModel.retrieveItems(query);
@@ -114,10 +114,8 @@ public class MainFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filter(newText);
-                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(context,
-                        SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
-                suggestions.saveRecentQuery(newText, null);
+                //filter(newText);
+                //suggestions.saveRecentQuery(newText, null);
                 return false;
             }
         });

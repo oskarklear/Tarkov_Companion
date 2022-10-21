@@ -16,7 +16,7 @@
         android:windowSoftInputMode="adjustNothing"
         tools:targetApi="31">
         <provider android:name=".SuggestionProvider"
-            android:authorities="com.tarkovcompanion.app.SuggestionProvider" />
+            android:authorities=".SuggestionProvider" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -25,6 +25,15 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".SearchableActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
         </activity>
     </application>
 
