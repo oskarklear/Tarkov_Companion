@@ -1,9 +1,13 @@
 package com.tarkovcompanion.app;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.SearchRecentSuggestionsProvider;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -15,6 +19,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,13 +28,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
+import java.security.Key;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,10 +50,12 @@ import java.util.Objects;
 public class MainFragment extends Fragment {
 
     private ItemViewModel itemViewModel;
+    private SearchViewModel searchViewModel;
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
+    private SearchAdapter autoCompleteAdapter;
     private ArrayList<Item> itemList;
-
+    private Activity activity;
 
     public MainFragment() {
         // Required empty public constructor
@@ -66,9 +80,12 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Activity activity =  requireActivity();
+        activity =  requireActivity();
         itemViewModel = new ViewModelProvider((ViewModelStoreOwner) activity)
                 .get(ItemViewModel.class);
+        searchViewModel = new ViewModelProvider((ViewModelStoreOwner) activity)
+                .get(SearchViewModel.class);
+
     }
 
     @Override
@@ -88,35 +105,78 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        SearchView searchView = (SearchView) view.findViewById(R.id.searchView);
-        searchView.setIconifiedByDefault(false);
-        searchView.setQueryRefinementEnabled(true);
-        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this.getContext(),
-                SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+        Context currentContext = requireContext();
+        autoCompleteAdapter = new SearchAdapter(currentContext, R.layout.list_item_x_button, new ArrayList<Search>(), searchViewModel);
+
+        AutoCompleteTextView searchView = (AutoCompleteTextView) view.findViewById(R.id.searchView);
+        searchView.setThreshold(1);
+        searchView.setAdapter(autoCompleteAdapter);
         itemViewModel.getItemLiveData().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
             @Override
             public void onChanged(List<Item> items) {
-                Log.v("Error", "Change in data observed");
+                Log.v("Error", "Change in item data observed");
                 if (items != null) {
                     adapter.updateAdapterList((ArrayList<Item>) items);
                     Log.v("Error", "Adapter updated");
                 }
             }
         });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchViewModel.getSearchLiveData().observe(getViewLifecycleOwner(), new Observer<List<Search>>() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                suggestions.saveRecentQuery(query, null);
-                Log.v("Error", "Retrieving new items...");
-                itemViewModel.retrieveItems(query);
+            public void onChanged(List<Search> searches) {
+                if (searches != null) {
+                    Log.v("Error", "Change in search data observed");
+                    autoCompleteAdapter.clear();
+                    autoCompleteAdapter.addAll(searches);
+                    autoCompleteAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        searchView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Log.v("Error", ""+ autoCompleteAdapter.getCount());
+                if (autoCompleteAdapter != null && autoCompleteAdapter.getCount() != 0) {
+                    ((AutoCompleteTextView) view).showDropDown();
+                }
+
+           }
+
+        });
+        searchView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    String searchQuery = searchView.getText().toString();
+                    if (!searchQuery.equals("")) {
+                        Log.v("Error", "Retrieving new items...");
+                        Log.v("Error", searchQuery);
+                        itemViewModel.retrieveItems(searchQuery);
+                        searchViewModel.insert(new Search(searchQuery));
+                        InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+                        activity.getCurrentFocus().clearFocus();
+                    }
+                }
                 return true;
+            }
+        });
+        searchView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int before) {
+
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                //filter(newText);
-                //suggestions.saveRecentQuery(newText, null);
-                return false;
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                //autoCompleteAdapter.getFilter()
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
     }

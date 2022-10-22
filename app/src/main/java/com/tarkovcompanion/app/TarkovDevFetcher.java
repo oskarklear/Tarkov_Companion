@@ -41,6 +41,10 @@ public class TarkovDevFetcher {
             public void onResponse(@NonNull Call<TarkovDevResponse> call,
                                    @NonNull Response<TarkovDevResponse> response) {
                 TarkovDevResponse tarkovDevResponse = response.body();
+                if (tarkovDevResponse == null) {
+                    Log.v("Error", "API Response was null!");
+                    return;
+                }
                 DataResponse dataResponse = tarkovDevResponse.getDataResponse();
                 List<Item> items = dataResponse.getItems();
                 responseLiveData.setValue(items);

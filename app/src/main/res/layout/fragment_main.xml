@@ -29,9 +29,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-
-
     <ImageButton
         android:id="@+id/imageButton2"
         android:layout_width="63dp"
@@ -43,24 +40,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.SearchView
+    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
         android:id="@+id/searchView"
         android:layout_width="293dp"
         android:layout_height="79dp"
         android:layout_marginTop="32dp"
         android:layout_marginBottom="9dp"
-        android:editTextColor="@color/black"
-        android:icon="@android:drawable/ic_menu_search"
-        android:searchSuggestAuthority="com.tarkovcompanion.app.SuggestionProvider"
-        android:searchSuggestSelection=" ?"
-        android:textColorHint="@color/black"
-        android:tint="@color/black"
-        android:title="@string/Search"
+        android:theme="@style/AutoCompleteTextViewStyle"
+        android:textColor="@color/black"
+        android:maxLines="1"
+        android:lines="1"
+        android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toStartOf="@+id/imageButton"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/imageButton2"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
