@@ -35,8 +35,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ItemAdapter.ViewHolder holder, int position) {
         // setting data to our views of recycler view.
         Item item = itemList.get(position);
-        holder.courseNameTV.setText(item.getItemName());
-        holder.courseDescTV.setText(item.getItemDescription());
+        holder.itemNameTV.setText(item.getItemName());
+        holder.itemDescTV.setText(item.getItemDescription());
     }
 
     @Override
@@ -46,13 +46,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // creating variables for our views.
-        private final TextView courseNameTV;
-        private final TextView courseDescTV;
+        private final TextView itemNameTV;
+        private final TextView itemDescTV;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             // initializing our views with their ids.
-            courseNameTV = itemView.findViewById(R.id.itemName);
-            courseDescTV = itemView.findViewById(R.id.itemDescription);
+            itemNameTV = itemView.findViewById(R.id.itemName);
+            itemDescTV = itemView.findViewById(R.id.itemDescription);
         }
     }
 }
