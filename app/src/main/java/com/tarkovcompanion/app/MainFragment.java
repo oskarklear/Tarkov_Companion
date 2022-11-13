@@ -12,8 +12,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
@@ -31,8 +34,10 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.security.Key;
@@ -47,7 +52,8 @@ import java.util.Random;
  * Use the {@link MainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment
+{
 
     private ItemViewModel itemViewModel;
     private SearchViewModel searchViewModel;
@@ -56,6 +62,7 @@ public class MainFragment extends Fragment {
     private SearchAdapter autoCompleteAdapter;
     private ArrayList<Item> itemList;
     private Activity activity;
+    private Context context;
 
     public MainFragment() {
         // Required empty public constructor
@@ -80,6 +87,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = requireContext();
         activity =  requireActivity();
         itemViewModel = new ViewModelProvider((ViewModelStoreOwner) activity)
                 .get(ItemViewModel.class);
@@ -97,7 +105,7 @@ public class MainFragment extends Fragment {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager( new LinearLayoutManager(this.getContext()));
-        adapter = new ItemAdapter();
+        adapter = new ItemAdapter(context);
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -105,12 +113,30 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Context currentContext = requireContext();
-        autoCompleteAdapter = new SearchAdapter(currentContext, R.layout.list_item_x_button, new ArrayList<Search>(), searchViewModel);
-
+        autoCompleteAdapter = new SearchAdapter(context, R.layout.list_item_x_button, new ArrayList<Search>(), searchViewModel);
         AutoCompleteTextView searchView = (AutoCompleteTextView) view.findViewById(R.id.searchView);
         searchView.setThreshold(1);
         searchView.setAdapter(autoCompleteAdapter);
+        TextView historyItem = view.findViewById(R.id.list_item_x_button);
+        AppCompatImageButton menuButton = view.findViewById(R.id.imageButton2);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getActivity()
+                        .getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragmentContainerView, new FavoritesPage());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
+        if (historyItem != null) {
+            historyItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    searchView.setText(historyItem.getText().toString());
+                }
+            });
+        }
         itemViewModel.getItemLiveData().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
             @Override
             public void onChanged(List<Item> items) {
@@ -179,7 +205,11 @@ public class MainFragment extends Fragment {
 
             }
         });
+
+
     }
+
+
     @Override
     public void onStart() {
         super.onStart();
@@ -208,37 +238,5 @@ public class MainFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.i("Fragment State", "onDestroy() called");
-    }
-
-
-    private void filter(String text) {
-        ArrayList<Item> filteredlist = new ArrayList<>();
-
-        for (Item item : Objects.requireNonNull(itemViewModel.getItemLiveData().getValue())) {
-            if (item.getItemName().toLowerCase().contains(text.toLowerCase())) {
-                filteredlist.add(item);
-            }
-        }
-        if (!filteredlist.isEmpty()) {
-            adapter.updateAdapterList(filteredlist);
-        }
-    }
-
-    private void buildRecyclerView() {
-
-        itemList = new ArrayList<Item>();
-
-        itemList.add(new Item("Hera Arms CQR tactical foregrip", "30,788₽"));
-        itemList.add(new Item("MP-155 Ultima large recoil pad", "24,552₽"));
-        itemList.add(new Item("VKBO army bag", "14,112₽"));
-        itemList.add(new Item("9x21mm P gzh", "831₽"));
-        itemList.add(new Item("MPX/MCX PMM ULSS foldable stock", "21,300₽"));
-
-        //adapter = new ItemAdapter(itemList, this.getContext());
-
-        LinearLayoutManager manager = new LinearLayoutManager(this.getContext());
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setAdapter(adapter);
     }
 }

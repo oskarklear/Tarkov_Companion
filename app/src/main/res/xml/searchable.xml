@@ -2,6 +2,7 @@
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
     android:label="@string/app_label"
     android:hint="@string/Search"
+    android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
     android:searchSuggestAuthority="com.tarkovcompanion.app.SuggestionProvider"
     android:searchSuggestSelection=" ?" >
 </searchable>
