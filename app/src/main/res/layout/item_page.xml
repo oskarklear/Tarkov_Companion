@@ -26,13 +26,14 @@
         android:id="@+id/shortNameView"
         android:layout_width="348dp"
         android:layout_height="31dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:text="Short Name"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="@color/black"
         android:textSize="18sp"
+        android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.466"
+        app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameView" />
 
@@ -161,11 +162,11 @@
         android:layout_width="154dp"
         android:layout_height="138dp"
         android:layout_marginStart="28dp"
-        android:layout_marginTop="12dp"
-        android:background="#EFEFEF"
+        android:layout_marginTop="16dp"
+        android:background="#818181"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/shortNameView"
-        app:srcCompat="@drawable/ic_launcher_background" />
+        app:srcCompat="@android:drawable/stat_notify_sync" />
 
     <Button
         android:id="@+id/backButton"
