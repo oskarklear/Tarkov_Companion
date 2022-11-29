@@ -90,9 +90,6 @@ public class DetailedItem extends Fragment {
         TextView itemTraderPriceView = view.findViewById(R.id.traderPriceView);
         ImageView itemImageView = view.findViewById(R.id.imageView);
 
-        // TODO: remove this after getting image loading
-        TextView temporaryIconLink = view.findViewById(R.id.temporaryIconLink);
-
         itemNameView.setText(item.getItemName());
         itemDescriptionView.setText(item.getDescription());
         itemLastLowPriceView.setText(String.format("%s₽", item.getLastLowPrice()));
@@ -101,17 +98,10 @@ public class DetailedItem extends Fragment {
         itemFleaMarketVeeView.setText(String.format("%s₽",item.getFleaMarketFee()));
         itemTraderPriceView.setText(String.format("%s₽", calculateHighestTraderSellPrice()));
 
-        // TODO: remove this after getting image loading
-        temporaryIconLink.setText(item.getIconLink());
-
-        // TODO: do this asynchronously
-        URL imageUrl = null;
-        try {
-            imageUrl = new URL(item.getIconLink());
-            Bitmap bmp = BitmapFactory.decodeStream(imageUrl.openConnection().getInputStream());
-            itemImageView.setImageBitmap(bmp);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (item.getLargeImageData() == null) {
+            new ImageFromURLTask(itemImageView, item).execute(item.getLargeIconLink(), "l");
+        } else {
+            itemImageView.setImageBitmap(item.getLargeImageData());
         }
 
         Button backButton = view.findViewById(R.id.backButton);

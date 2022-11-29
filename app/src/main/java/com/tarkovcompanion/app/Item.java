@@ -1,12 +1,23 @@
 package com.tarkovcompanion.app;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Looper;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Entity(tableName = "item_table")
 public class Item {
@@ -36,7 +47,27 @@ public class Item {
     private int fleaMarketFee;
     @SerializedName("iconLink")
     private String iconLink;
+    @SerializedName("image512pxLink")
+    private String largeIconLink;
 
+    @Ignore
+    private Bitmap smallImageData;
+    @Ignore
+    private Bitmap largeImageData;
+
+    public void setSmallImageData(Bitmap imageData) {
+        this.smallImageData = imageData;
+    }
+
+    public Bitmap getSmallImageData() { return smallImageData; }
+
+    public void setLargeImageData(Bitmap imageData) {
+        this.largeImageData = imageData;
+    }
+
+    public Bitmap getLargeImageData() {
+        return largeImageData;
+    }
 
     public Item() {
         this.id = "";
@@ -139,4 +170,7 @@ public class Item {
         this.iconLink = iconLink;
     }
 
+    public String getLargeIconLink() { return largeIconLink; }
+
+    public void setLargeIconLink(String largeIconLink) { this.largeIconLink = largeIconLink; }
 }
