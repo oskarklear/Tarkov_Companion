@@ -6,7 +6,7 @@ public class QueryBuilder {
     private final String queryContents = "{ id name shortName description lastLowPrice avg24hPrice " +
             "sellFor { vendor { name } price currency } " +
             "buyFor { vendor { name } price currency } " +
-            "height width fleaMarketFee iconLink }";
+            "height width fleaMarketFee iconLink image512pxLink }";
     private final String defaultQuery = "{ items(offset: 0) " + queryContents + "}";
     private int loadingLimit = 5;
 

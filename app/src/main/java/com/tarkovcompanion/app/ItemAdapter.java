@@ -1,8 +1,10 @@
 package com.tarkovcompanion.app;
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -43,6 +45,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         Item item = itemList.get(position);
         holder.itemNameTV.setText(item.getItemName());
         holder.itemLastLowPriceTV.setText(String.valueOf(item.getLastLowPrice()));
+        if (item.getSmallImageData() == null) {
+            new ImageFromURLTask(holder.imageView, item).execute(item.getIconLink(), "s");
+        } else {
+            holder.imageView.setImageBitmap(item.getSmallImageData());
+        }
         holder.recyclerItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -62,12 +69,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         private final TextView itemNameTV;
         private final TextView itemLastLowPriceTV;
         private final RelativeLayout recyclerItem;
+        private final ImageView imageView;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             // initializing our views with their ids.
             itemNameTV = itemView.findViewById(R.id.itemName);
             itemLastLowPriceTV = itemView.findViewById(R.id.lastLowPrice);
             recyclerItem = itemView.findViewById(R.id.recyclerItem);
+            imageView = itemView.findViewById(R.id.imageView);
         }
     }
 
