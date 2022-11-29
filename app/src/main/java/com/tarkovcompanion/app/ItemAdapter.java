@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -68,7 +69,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         // creating variables for our views.
         private final TextView itemNameTV;
         private final TextView itemLastLowPriceTV;
-        private final RelativeLayout recyclerItem;
+        private final ConstraintLayout recyclerItem;
         private final ImageView imageView;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

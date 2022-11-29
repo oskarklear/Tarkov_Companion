@@ -82,7 +82,7 @@ public class DetailedItem extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
         TextView itemNameView = view.findViewById(R.id.nameView);
-        TextView itemDescriptionView = view.findViewById(R.id.itemDescriptionView);
+        TextView itemShortNameView = view.findViewById(R.id.shortNameView);
         TextView itemLastLowPriceView = view.findViewById(R.id.lowPriceView);
         TextView itemPricePerSlotView = view.findViewById(R.id.pricePerSlotView);
         TextView itemDayAverageView = view.findViewById(R.id.dayAverageView);
@@ -91,7 +91,7 @@ public class DetailedItem extends Fragment {
         ImageView itemImageView = view.findViewById(R.id.imageView);
 
         itemNameView.setText(item.getItemName());
-        itemDescriptionView.setText(item.getDescription());
+        itemShortNameView.setText(item.getShortName());
         itemLastLowPriceView.setText(String.format("%s₽", item.getLastLowPrice()));
         itemPricePerSlotView.setText(String.format("%s₽", calculatePricePerSlot()));
         itemDayAverageView.setText(String.format("%s₽", item.getAvg24hPrice()));
