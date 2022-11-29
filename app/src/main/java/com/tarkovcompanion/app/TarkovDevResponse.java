@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class TarkovDevResponse {
 
     @SerializedName("data")
-    public DataResponse dataResponse;
+    private DataResponse dataResponse;
 
     public DataResponse getDataResponse() {
         return dataResponse;

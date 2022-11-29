@@ -6,6 +6,9 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,6 +17,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +31,7 @@ public class FavoritesPage extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
+    private ItemViewModel itemViewModel;
     private ItemAdapter adapter;
     private RecyclerView recyclerView;
     private Activity activity;
@@ -53,6 +60,8 @@ public class FavoritesPage extends Fragment {
         super.onCreate(savedInstanceState);
         context = requireContext();
         activity =  requireActivity();
+        itemViewModel = new ViewModelProvider((ViewModelStoreOwner) activity)
+                .get(ItemViewModel.class);
     }
 
     @Override
@@ -70,13 +79,22 @@ public class FavoritesPage extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         Button backButton = view.findViewById(R.id.favoritesBackButton);
         backButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("Button Pressed", "Should go back now");
 
-        @Override
-        public void onClick(View v) {
-            Log.i("Button Pressed", "Should go back now");
-
-            getParentFragmentManager().popBackStackImmediate();
-        }
-    });
+                getParentFragmentManager().popBackStackImmediate();
+            }
+        });
+        itemViewModel.getAllSavedItems().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+            @Override
+            public void onChanged(List<Item> items) {
+                Log.v("Error", "Change in item data observed");
+                if (items != null) {
+                    adapter.updateAdapterList((ArrayList<Item>) items);
+                    Log.v("Error", "Adapter updated");
+                }
+            }
+        });
     }
 }

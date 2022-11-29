@@ -1,16 +1,32 @@
 package com.tarkovcompanion.app;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import retrofit2.http.Url;
 
 public class DetailedItem extends Fragment {
 
@@ -19,9 +35,11 @@ public class DetailedItem extends Fragment {
     private static final String ARG_PARAM1 = "name";
     private static final String ARG_PARAM2 = "description";
 
-    // TODO: Rename and change types of parameters
-    private String name;
-    private String description;
+    private Activity activity;
+    private Context context;
+    private ItemViewModel itemViewModel;
+
+    private Item item;
 
     public DetailedItem() {
         // Required empty public constructor
@@ -48,10 +66,9 @@ public class DetailedItem extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            name = getArguments().getString(ARG_PARAM1);
-            description = getArguments().getString(ARG_PARAM2);
-        }
+        activity = requireActivity();
+        itemViewModel = new ViewModelProvider((ViewModelStoreOwner) activity)
+                .get(ItemViewModel.class);
     }
 
     @Override
@@ -65,9 +82,37 @@ public class DetailedItem extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
         TextView itemNameView = view.findViewById(R.id.nameView);
+        TextView itemDescriptionView = view.findViewById(R.id.itemDescriptionView);
+        TextView itemLastLowPriceView = view.findViewById(R.id.lowPriceView);
+        TextView itemPricePerSlotView = view.findViewById(R.id.pricePerSlotView);
         TextView itemDayAverageView = view.findViewById(R.id.dayAverageView);
-        itemNameView.setText(name);
-        itemDayAverageView.setText(description + "₽");
+        TextView itemFleaMarketVeeView = view.findViewById(R.id.fleaMarketFeeView);
+        TextView itemTraderPriceView = view.findViewById(R.id.traderPriceView);
+        ImageView itemImageView = view.findViewById(R.id.imageView);
+
+        // TODO: remove this after getting image loading
+        TextView temporaryIconLink = view.findViewById(R.id.temporaryIconLink);
+
+        itemNameView.setText(item.getItemName());
+        itemDescriptionView.setText(item.getDescription());
+        itemLastLowPriceView.setText(String.format("%s₽", item.getLastLowPrice()));
+        itemPricePerSlotView.setText(String.format("%s₽", calculatePricePerSlot()));
+        itemDayAverageView.setText(String.format("%s₽", item.getAvg24hPrice()));
+        itemFleaMarketVeeView.setText(String.format("%s₽",item.getFleaMarketFee()));
+        itemTraderPriceView.setText(String.format("%s₽", calculateHighestTraderSellPrice()));
+
+        // TODO: remove this after getting image loading
+        temporaryIconLink.setText(item.getIconLink());
+
+        // TODO: do this asynchronously
+        URL imageUrl = null;
+        try {
+            imageUrl = new URL(item.getIconLink());
+            Bitmap bmp = BitmapFactory.decodeStream(imageUrl.openConnection().getInputStream());
+            itemImageView.setImageBitmap(bmp);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         Button backButton = view.findViewById(R.id.backButton);
         backButton.setOnClickListener( new View.OnClickListener() {
@@ -84,8 +129,31 @@ public class DetailedItem extends Fragment {
             @Override
             public void onClick(View v)
             {
-                //TODO: Add to favorites database
+                itemViewModel.insert(item);
             }
         });
     }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    private double calculatePricePerSlot() {
+        return 1.0 * item.getLastLowPrice() / (item.getHeight() * item.getWidth());
+    }
+
+    private int calculateHighestTraderSellPrice() {
+        int max = Integer.MIN_VALUE;
+        for (ItemPrice itemPrice : item.getSellForItemPrices()) {
+            if (!itemPrice.getItemVendor().getName().equals("Flea Market")
+                && itemPrice.getPrice() > max ) {
+                max = itemPrice.getPrice();
+            }
+        }
+        return max;
+    }
+
+
+
+
 }

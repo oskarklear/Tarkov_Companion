@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -18,6 +19,7 @@ import java.util.List;
 
 public class SearchAdapter extends ArrayAdapter<Search> {
 
+    private TextView searchBarTextView;
     private List<Search> searchList;
     private LayoutInflater inflater;
     private Context context;
@@ -45,6 +47,15 @@ public class SearchAdapter extends ArrayAdapter<Search> {
         Search search = searchList.get(position);
 
         searchText.setText(search.searchText);
+
+        searchText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (searchBarTextView != null) {
+                    searchBarTextView.setText(searchText.getText());
+                }
+            }
+        });
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,8 +65,11 @@ public class SearchAdapter extends ArrayAdapter<Search> {
             }
         });
 
+
         return view;
     }
+
+    public void setSearchBarTextView(TextView searchBarTextView) { this.searchBarTextView = searchBarTextView; }
 
     public void clear() {
         this.searchList.clear();

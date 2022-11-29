@@ -13,7 +13,6 @@ public class SearchViewModel extends AndroidViewModel {
 
     private final LiveData<List<Search>> searchLiveData;
 
-
     public SearchViewModel(Application app) {
         super(app);
         this.repository = new SearchRepository(app);
