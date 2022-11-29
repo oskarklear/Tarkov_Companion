@@ -23,10 +23,11 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_marginStart="12dp"
+            android:background="#B1B1B1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_launcher_background" />
+            app:srcCompat="@android:drawable/stat_notify_sync" />
 
         <TextView
             android:id="@+id/itemName"
