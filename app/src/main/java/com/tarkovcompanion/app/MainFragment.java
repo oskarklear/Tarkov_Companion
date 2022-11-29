@@ -1,21 +1,15 @@
 package com.tarkovcompanion.app;
 
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Context;
-import android.content.SearchRecentSuggestionsProvider;
 import android.os.Bundle;
-import android.provider.SearchRecentSuggestions;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -25,27 +19,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.security.Key;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -117,6 +100,7 @@ public class MainFragment extends Fragment
         AutoCompleteTextView searchView = (AutoCompleteTextView) view.findViewById(R.id.searchView);
         searchView.setThreshold(1);
         searchView.setAdapter(autoCompleteAdapter);
+        autoCompleteAdapter.setSearchBarTextView(searchView);
         TextView historyItem = view.findViewById(R.id.list_item_x_button);
         AppCompatImageButton menuButton = view.findViewById(R.id.imageButton2);
         menuButton.setOnClickListener(new View.OnClickListener() {
@@ -159,8 +143,17 @@ public class MainFragment extends Fragment
             }
         });
 
+        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    if (autoCompleteAdapter != null && autoCompleteAdapter.getCount() != 0) {
+                        ((AutoCompleteTextView) view).showDropDown();
+                    }
+                }
+            }
+        });
         searchView.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 Log.v("Error", ""+ autoCompleteAdapter.getCount());
@@ -169,7 +162,6 @@ public class MainFragment extends Fragment
                 }
 
            }
-
         });
         searchView.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -179,14 +171,20 @@ public class MainFragment extends Fragment
                     if (!searchQuery.equals("")) {
                         Log.v("Error", "Retrieving new items...");
                         Log.v("Error", searchQuery);
-                        itemViewModel.retrieveItems(searchQuery);
+                        itemViewModel.retrieveItemsFromSearch(searchQuery);
                         searchViewModel.insert(new Search(searchQuery));
-                        InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-                        activity.getCurrentFocus().clearFocus();
                     }
+                    InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+                    activity.getCurrentFocus().clearFocus();
                 }
                 return true;
+            }
+        });
+        searchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
             }
         });
         searchView.addTextChangedListener(new TextWatcher() {

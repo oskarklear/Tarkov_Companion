@@ -8,7 +8,7 @@ import java.util.List;
 
 public class SearchRepository {
 
-    private SearchDao searchDao;
+    private final SearchDao searchDao;
     private LiveData<List<Search>> allSearches;
     private final String TAG = getClass().getSimpleName();
 
@@ -31,9 +31,7 @@ public class SearchRepository {
     }
 
     void deleteAll() {
-        AppDatabase.databaseWriteExectutor.execute(() -> {
-            searchDao.deleteAll();
-        });
+        AppDatabase.databaseWriteExectutor.execute(searchDao::deleteAll);
     }
 
     LiveData<List<Search>> getAllSearches() {

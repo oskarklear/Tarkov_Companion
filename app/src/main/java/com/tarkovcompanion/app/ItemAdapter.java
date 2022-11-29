@@ -1,7 +1,5 @@
 package com.tarkovcompanion.app;
 import android.content.Context;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +42,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         // setting data to our views of recycler view.
         Item item = itemList.get(position);
         holder.itemNameTV.setText(item.getItemName());
-        holder.itemDescTV.setText(item.getItemDescription());
+        holder.itemLastLowPriceTV.setText(String.valueOf(item.getLastLowPrice()));
         holder.recyclerItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -62,24 +60,21 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // creating variables for our views.
         private final TextView itemNameTV;
-        private final TextView itemDescTV;
+        private final TextView itemLastLowPriceTV;
         private final RelativeLayout recyclerItem;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             // initializing our views with their ids.
             itemNameTV = itemView.findViewById(R.id.itemName);
-            itemDescTV = itemView.findViewById(R.id.itemDescription);
+            itemLastLowPriceTV = itemView.findViewById(R.id.lastLowPrice);
             recyclerItem = itemView.findViewById(R.id.recyclerItem);
         }
     }
 
     private void fragmentJump(Item item) {
-        Fragment mFragment = new DetailedItem();
-        Bundle mBundle = new Bundle();
-        mBundle.putString("name", item.getItemName());
-        mBundle.putString("description", item.getItemDescription());
-        mFragment.setArguments(mBundle);
-        switchContent(R.id.fragmentContainerView, mFragment);
+        DetailedItem detailedItemFragment = new DetailedItem();
+        detailedItemFragment.setItem(item);
+        switchContent(R.id.fragmentContainerView, detailedItemFragment);
     }
 
     public void switchContent(int id, Fragment fragment) {
