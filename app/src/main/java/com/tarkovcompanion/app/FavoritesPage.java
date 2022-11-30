@@ -1,6 +1,5 @@
 package com.tarkovcompanion.app;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -22,13 +21,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FavoritesPage#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FavoritesPage extends Fragment {
-
 
     private ItemViewModel itemViewModel;
     private ItemAdapter adapter;
