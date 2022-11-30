@@ -49,7 +49,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/imageButton"
         android:layout_width="65dp"
         android:layout_height="60dp"
         android:layout_marginEnd="8dp"
@@ -57,14 +57,14 @@
         app:layout_constraintBottom_toBottomOf="@+id/searchView"
         app:layout_constraintEnd_toStartOf="@+id/searchView"
         app:layout_constraintTop_toTopOf="@+id/searchView"
-        app:layout_constraintVertical_bias="0.526" />
+        app:layout_constraintVertical_bias="0.437" />
 
     <androidx.appcompat.widget.AppCompatAutoCompleteTextView
         android:id="@+id/searchView"
-        android:layout_width="293dp"
-        android:layout_height="79dp"
+        android:layout_width="273dp"
+        android:layout_height="72dp"
         android:layout_marginTop="84dp"
-        android:layout_marginEnd="36dp"
+        android:layout_marginEnd="56dp"
         android:backgroundTintMode="screen"
         android:completionHintView="@layout/list_item_x_button"
         android:dropDownWidth="wrap_content"
@@ -79,7 +79,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.008" />
+        app:layout_constraintVertical_bias="0.014" />
+
+    <ImageView
+        android:id="@+id/microphoneView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:src="@android:drawable/ic_btn_speak_now"
+        app:layout_constraintBottom_toBottomOf="@+id/searchView"
+        app:layout_constraintStart_toEndOf="@+id/searchView"
+        app:layout_constraintTop_toTopOf="@+id/searchView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
