@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -43,35 +44,18 @@ public class MainFragment extends Fragment
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private SearchAdapter autoCompleteAdapter;
-    private ArrayList<Item> itemList;
-    private Activity activity;
+    private FragmentActivity activity;
     private Context context;
 
     public MainFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MainFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MainFragment newInstance(String param1, String param2) {
-        MainFragment fragment = new MainFragment();
-
-        return fragment;
-    }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = requireContext();
-        activity =  requireActivity();
+        activity = requireActivity();
         itemViewModel = new ViewModelProvider((ViewModelStoreOwner) activity)
                 .get(ItemViewModel.class);
         searchViewModel = new ViewModelProvider((ViewModelStoreOwner) activity)
@@ -85,7 +69,7 @@ public class MainFragment extends Fragment
         //Log.i("Fragment State", "onCreateView() called");
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         setHasOptionsMenu(true);
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager( new LinearLayoutManager(this.getContext()));
         adapter = new ItemAdapter(context);
@@ -102,25 +86,7 @@ public class MainFragment extends Fragment
         searchView.setAdapter(autoCompleteAdapter);
         autoCompleteAdapter.setSearchBarTextView(searchView);
         TextView historyItem = view.findViewById(R.id.list_item_x_button);
-        AppCompatImageButton menuButton = view.findViewById(R.id.imageButton2);
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentTransaction fragmentTransaction = getActivity()
-                        .getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragmentContainerView, new FavoritesPage());
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
-        });
-        if (historyItem != null) {
-            historyItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    searchView.setText(historyItem.getText().toString());
-                }
-            });
-        }
+        AppCompatImageButton menuButton = view.findViewById(R.id.imageButton);
         itemViewModel.getItemLiveData().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
             @Override
             public void onChanged(List<Item> items) {
@@ -142,7 +108,16 @@ public class MainFragment extends Fragment
                 }
             }
         });
-
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = requireActivity()
+                        .getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragmentContainerView, new FavoritesPage());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
         searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
@@ -181,32 +156,8 @@ public class MainFragment extends Fragment
                 return true;
             }
         });
-        searchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
-        });
-        searchView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int start, int count, int before) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                //autoCompleteAdapter.getFilter()
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-
 
     }
-
 
     @Override
     public void onStart() {

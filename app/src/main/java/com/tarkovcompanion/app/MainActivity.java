@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
-
     public void switchContent(int id, Fragment fragment) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(id, fragment);
@@ -18,21 +17,17 @@ public class MainActivity extends AppCompatActivity {
         ft.commit();
     }
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.i("Activity State", "onCreate");
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.i("Activity State", "onStart");
-
     }
 
     @Override
