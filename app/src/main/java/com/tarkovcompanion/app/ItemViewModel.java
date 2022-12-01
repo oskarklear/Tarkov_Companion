@@ -20,18 +20,34 @@ public class ItemViewModel extends AndroidViewModel {
     private final TarkovDevFetcher mTarkovDevFetcher = new TarkovDevFetcher();
     private final QueryBuilder queryBuilder = new QueryBuilder();
 
+    private String recentSearch = "";
+    private int offset = 0;
+
+    private final int limit = 10;
+
     public ItemViewModel(Application app) {
         super(app);
         this.repository = new ItemRepository(app);
         mItemLiveData = new MutableLiveData<>();
         mFavoriteLiveData = new MediatorLiveData<>();
-        mTarkovDevFetcher.fetchItems(queryBuilder.getDefaultQuery(), mItemLiveData);
+        String query = queryBuilder.makeQueryFromSearch("", 0, limit);
+        mTarkovDevFetcher.fetchItems(query, mItemLiveData, true);
         mFavoriteLiveData.addSource(repository.getAllSavedItems(), mFavoriteLiveData::setValue);
     }
 
     public void retrieveItemsFromSearch(String search) {
-        String query = queryBuilder.makeQueryFromSearch(search);
-        mTarkovDevFetcher.fetchItems(query, mItemLiveData);
+        if (!recentSearch.equals(search)) {
+            recentSearch = search;
+        }
+        String query = queryBuilder.makeQueryFromSearch(search, 0, limit);
+        mTarkovDevFetcher.fetchItems(query, mItemLiveData, true);
+        offset = 0;
+    }
+
+    public void pollMoreItems() {
+        String query = queryBuilder.makeQueryFromSearch(recentSearch, offset, limit);
+        mTarkovDevFetcher.fetchItems(query, mItemLiveData, false);
+        offset += limit;
     }
 
     public void updateItemsFromSavedList() {
@@ -47,7 +63,7 @@ public class ItemViewModel extends AndroidViewModel {
         }
         String query = queryBuilder.makeQueryFromIds(ids);
 
-        mTarkovDevFetcher.fetchItems(query, mFavoriteLiveData);
+        mTarkovDevFetcher.fetchItems(query, mFavoriteLiveData, true);
         repository.insertAll(mFavoriteLiveData.getValue());
     }
 
