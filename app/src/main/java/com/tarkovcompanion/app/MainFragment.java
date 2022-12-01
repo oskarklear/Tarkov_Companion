@@ -1,9 +1,16 @@
 package com.tarkovcompanion.app;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.util.Log;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
@@ -22,7 +29,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +44,25 @@ public class MainFragment extends Fragment
     private SearchAdapter autoCompleteAdapter;
     private FragmentActivity activity;
     private Context context;
+
+    private AutoCompleteTextView searchView;
+
+    ActivityResultLauncher<Intent> speechToTextResult =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>() {
+                        @Override
+                        public void onActivityResult(ActivityResult result) {
+                            if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                                ArrayList<String> results = result.getData().
+                                        getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                                searchView.setText(results.get(0));
+                                searchView.requestFocus();
+                                searchView.setSelection(searchView.getText().length());
+                                InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                            }
+                        }
+                    });
 
     public MainFragment() {
         // Required empty public constructor
@@ -72,12 +98,12 @@ public class MainFragment extends Fragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         autoCompleteAdapter = new SearchAdapter(context, R.layout.list_item_x_button, new ArrayList<Search>(), searchViewModel);
-        AutoCompleteTextView searchView = (AutoCompleteTextView) view.findViewById(R.id.searchView);
+        searchView = (AutoCompleteTextView) view.findViewById(R.id.searchView);
         searchView.setThreshold(1);
         searchView.setAdapter(autoCompleteAdapter);
-        autoCompleteAdapter.setSearchBarTextView(searchView);
-        TextView historyItem = view.findViewById(R.id.list_item_x_button);
+        autoCompleteAdapter.setSearchBarEditText(searchView);
         AppCompatImageButton menuButton = view.findViewById(R.id.imageButton);
+        ImageView speechToTextView = view.findViewById(R.id.microphoneView);
         itemViewModel.getItemLiveData().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
             @Override
             public void onChanged(List<Item> items) {
@@ -147,7 +173,14 @@ public class MainFragment extends Fragment
                 return true;
             }
         });
-
+        speechToTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                speechToTextResult.launch(intent);
+            }
+        });
     }
 
     @Override
