@@ -1,5 +1,7 @@
 package com.tarkovcompanion.app;
 
+import android.util.Log;
+
 import java.util.List;
 
 public class QueryBuilder {
@@ -9,20 +11,16 @@ public class QueryBuilder {
             "sellFor { vendor { name } price currency } " +
             "buyFor { vendor { name } price currency } " +
             "height width fleaMarketFee iconLink image512pxLink }";
-    private final String defaultQuery = "{ items(offset: 0) " + queryContents + "}";
-    private int loadingLimit = 5;
 
     public QueryBuilder() {}
 
-    public String getDefaultQuery() {
-        return defaultQuery;
-    }
-
-    public String makeQueryFromSearch(String search) {
+    public String makeQueryFromSearch(String search, int offset, int limit) {
         if (search.equals("")) {
-            return defaultQuery;
+            Log.i("Error", "{ items(offset: "+offset+" limit: "+limit+") " + queryContents + "}");
+            return "{ items(offset: "+offset+" limit: "+limit+") " + queryContents + "}";
         }
-        return "{ items(offset: 0 name: \"" + search + "\")" + queryContents + "}";
+
+        return "{ items(offset: "+offset+" limit: "+limit+" name: \"" + search + "\")" + queryContents + "}";
     }
 
     public String makeQueryFromIds(List<String> ids) {

@@ -31,7 +31,7 @@ public class TarkovDevFetcher {
         mTarkovDevApi = mRetrofit.create(TarkovDevApi.class);
     }
 
-    public void fetchItems(String query, MutableLiveData<List<Item>> responseLiveData) {
+    public void fetchItems(String query, MutableLiveData<List<Item>> responseLiveData, boolean replace) {
         Log.v("Error", "Fetching...");
         JsonObject queryObject = new JsonObject();
         queryObject.addProperty("query", query);
@@ -47,7 +47,16 @@ public class TarkovDevFetcher {
                 }
                 DataResponse dataResponse = tarkovDevResponse.getDataResponse();
                 List<Item> items = dataResponse.getItems();
-                responseLiveData.setValue(items);
+                if (replace) {
+                    responseLiveData.setValue(items);
+                } else {
+                    List<Item> currentItems = responseLiveData.getValue();
+                    if (currentItems != null) {
+                        currentItems.addAll(items);
+                        responseLiveData.setValue(currentItems);
+                    }
+                }
+
                 Log.v("Error", "Items fetched...");
             }
 
