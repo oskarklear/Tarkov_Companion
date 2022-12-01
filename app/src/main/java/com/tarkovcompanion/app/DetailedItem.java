@@ -25,6 +25,8 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import retrofit2.http.Url;
 
@@ -32,6 +34,7 @@ public class DetailedItem extends Fragment {
 
     private ItemViewModel itemViewModel;
     private Item item;
+    private boolean isFavorited;
 
     public DetailedItem() {
         // Required empty public constructor
@@ -42,6 +45,12 @@ public class DetailedItem extends Fragment {
         super.onCreate(savedInstanceState);
         itemViewModel = new ViewModelProvider((ViewModelStoreOwner) requireActivity())
                 .get(ItemViewModel.class);
+        Future<Boolean> itemFavorited = itemViewModel.doesItemExist(item.getId());
+        try {
+            isFavorited = itemFavorited.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -71,7 +80,6 @@ public class DetailedItem extends Fragment {
         itemFleaMarketVeeView.setText(String.format("%s₽",item.getFleaMarketFee()));
         itemTraderPriceView.setText(String.format("%s₽", calculateHighestTraderSellPrice()));
 
-        boolean itemFavorited = itemViewModel.doesItemExist(item.getId());
 
         if (item.getLargeImageData() == null) {
             new ImageFromURLTask(itemImageView, item).execute(item.getLargeIconLink(), "l");
@@ -89,18 +97,21 @@ public class DetailedItem extends Fragment {
         });
 
         Button favoriteButton = view.findViewById(R.id.favoriteButton);
-        if (itemFavorited) {
-            favoriteButton.setText("Remove From Favorites");
+        if (isFavorited) {
+            favoriteButton.setText("Remove From\nFavorites");
         }
         favoriteButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                if (itemFavorited) {
+                if (isFavorited) {
                     itemViewModel.delete(item);
+                    favoriteButton.setText("Add to Favorites");
                 } else {
                     itemViewModel.insert(item);
+                    favoriteButton.setText("Remove From\nFavorites");
                 }
+                isFavorited = !isFavorited;
             }
         });
     }
