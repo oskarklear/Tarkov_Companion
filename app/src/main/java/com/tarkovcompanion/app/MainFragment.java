@@ -77,7 +77,6 @@ public class MainFragment extends Fragment
                 .get(ItemViewModel.class);
         searchViewModel = new ViewModelProvider((ViewModelStoreOwner) activity)
                 .get(SearchViewModel.class);
-
     }
 
     @Override
@@ -91,7 +90,6 @@ public class MainFragment extends Fragment
         recyclerView.setLayoutManager( new LinearLayoutManager(this.getContext()));
         adapter = new ItemAdapter(context);
         recyclerView.setAdapter(adapter);
-
         return view;
     }
 

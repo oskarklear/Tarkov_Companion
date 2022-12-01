@@ -25,6 +25,12 @@ public class ItemRepository {
         });
     }
 
+    void insertAll(List<Item> items) {
+        AppDatabase.databaseWriteExectutor.execute(() -> {
+            itemDao.insertAll(items);
+        });
+    }
+
     void delete(Item item) {
         AppDatabase.databaseWriteExectutor.execute(() -> {
             itemDao.delete(item);

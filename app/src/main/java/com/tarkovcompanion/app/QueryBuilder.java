@@ -1,5 +1,7 @@
 package com.tarkovcompanion.app;
 
+import java.util.List;
+
 public class QueryBuilder {
     // "{ \"query\": \"{ items { name description types avg24hPrice basePrice width height changeLast48hPercent iconLink link sellFor { price source } } }\" }";
 
@@ -23,5 +25,17 @@ public class QueryBuilder {
         return "{ items(offset: 0 name: \"" + search + "\")" + queryContents + "}";
     }
 
+    public String makeQueryFromIds(List<String> ids) {
+        StringBuilder idListSB = new StringBuilder();
+        idListSB.append('[');
+        for (String id : ids) {
+            idListSB.append('"');
+            idListSB.append(id);
+            idListSB.append('"');
+            idListSB.append(',');
+        }
+        idListSB.append(']');
+        return "{ items(ids: " + idListSB.toString() + ")" + queryContents + "}";
+    }
 
 }
