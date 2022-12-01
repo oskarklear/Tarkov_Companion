@@ -1,16 +1,13 @@
 package com.tarkovcompanion.app;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
-import androidx.lifecycle.ViewModel;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class ItemViewModel extends AndroidViewModel {
     private final ItemRepository repository;
@@ -39,7 +36,7 @@ public class ItemViewModel extends AndroidViewModel {
 
     public LiveData<List<Item>> getAllSavedItems() { return repository.getAllSavedItems(); }
 
-    public boolean doesItemExist(String id) { return repository.doesItemExist(id); }
+    public Future<Boolean> doesItemExist(String id) { return repository.doesItemExist(id); }
 
     public LiveData<List<Item>> getItemLiveData() {
         return mItemLiveData;

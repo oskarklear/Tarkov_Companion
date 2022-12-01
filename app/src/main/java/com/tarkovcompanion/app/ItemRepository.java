@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class ItemRepository {
 
@@ -36,5 +37,7 @@ public class ItemRepository {
 
     LiveData<List<Item>> getAllSavedItems() { return allSavedItems; }
 
-    boolean doesItemExist(String id) { return itemDao.isItemSaved(id) != 0; }
+    Future<Boolean> doesItemExist(String id) {
+        return AppDatabase.databaseWriteExectutor.submit(() -> itemDao.isItemSaved(id) != 0);
+    }
 }
