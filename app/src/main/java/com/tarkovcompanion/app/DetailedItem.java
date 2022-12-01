@@ -71,6 +71,8 @@ public class DetailedItem extends Fragment {
         itemFleaMarketVeeView.setText(String.format("%s₽",item.getFleaMarketFee()));
         itemTraderPriceView.setText(String.format("%s₽", calculateHighestTraderSellPrice()));
 
+        boolean itemFavorited = itemViewModel.doesItemExist(item.getId());
+
         if (item.getLargeImageData() == null) {
             new ImageFromURLTask(itemImageView, item).execute(item.getLargeIconLink(), "l");
         } else {
@@ -87,12 +89,18 @@ public class DetailedItem extends Fragment {
         });
 
         Button favoriteButton = view.findViewById(R.id.favoriteButton);
+        if (itemFavorited) {
+            favoriteButton.setText("Remove From Favorites");
+        }
         favoriteButton.setOnClickListener( new View.OnClickListener() {
-
             @Override
             public void onClick(View v)
             {
-                itemViewModel.insert(item);
+                if (itemFavorited) {
+                    itemViewModel.delete(item);
+                } else {
+                    itemViewModel.insert(item);
+                }
             }
         });
     }

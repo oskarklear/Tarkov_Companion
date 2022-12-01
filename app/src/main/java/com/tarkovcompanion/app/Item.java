@@ -49,17 +49,10 @@ public class Item {
     private String iconLink;
     @SerializedName("image512pxLink")
     private String largeIconLink;
-    private boolean favorited;
     @Ignore
     private Bitmap smallImageData;
     @Ignore
     private Bitmap largeImageData;
-
-    public void setFavorited(boolean value) {
-        this.favorited = value;
-    }
-
-    public boolean getFavorited() { return favorited; }
 
     public void setSmallImageData(Bitmap imageData) {
         this.smallImageData = imageData;
