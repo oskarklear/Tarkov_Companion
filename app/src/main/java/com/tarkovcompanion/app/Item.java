@@ -70,7 +70,6 @@ public class Item {
 
     public Item() {
         this.id = "";
-        this.favorited = false;
     }
 
     public String getItemName() {
