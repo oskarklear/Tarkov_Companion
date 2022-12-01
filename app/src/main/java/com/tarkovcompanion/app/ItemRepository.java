@@ -36,5 +36,5 @@ public class ItemRepository {
 
     LiveData<List<Item>> getAllSavedItems() { return allSavedItems; }
 
-
+    boolean doesItemExist(String id) { return itemDao.isItemSaved(id) != 0; }
 }

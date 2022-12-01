@@ -39,6 +39,8 @@ public class ItemViewModel extends AndroidViewModel {
 
     public LiveData<List<Item>> getAllSavedItems() { return repository.getAllSavedItems(); }
 
+    public boolean doesItemExist(String id) { return repository.doesItemExist(id); }
+
     public LiveData<List<Item>> getItemLiveData() {
         return mItemLiveData;
     }

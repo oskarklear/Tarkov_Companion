@@ -23,8 +23,8 @@ public interface ItemDao {
     @Query("SELECT * FROM item_table")
     public LiveData<List<Item>> loadAllSavedItems();
 
-    //@Query("SELECT search FROM search_table WHERE search LIKE :query")
-    //public LiveData<List<Search>> findSimilarSearch(String query);
+    @Query("SELECT * FROM item_table WHERE id = :id")
+    int isItemSaved(String id);
 
 
 }
